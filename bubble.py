@@ -3,7 +3,6 @@
 import cv2
 import numpy as np
 
-# matplotlib (need ?)
 
 class Bubble:
 
@@ -20,9 +19,22 @@ class Bubble:
 
     @property
     def trajectory(self):
-        raise NotImplementedError
-        # TODO: Interpolate between missing steps
-        return [k.pt for k in self.keypoints]
+        pos = []
+        for idx, keypoint in enumerate(self.keypoints):
+            if self.first_seen + len(pos) == self.frames[idx]:
+                pos.append(keypoint.pt)
+            else:
+                # Interpolate for missing positions
+                last_known = pos[-1]
+                n = self.frames[idx] - (self.first_seen + len(pos)) + 1
+                inter_step = ((keypoint.pt[0]-last_known[0])/n, (keypoint.pt[1]-last_known[1])/n)
+                for d in range(1, n):
+                    pos.append((
+                        last_known[0] + inter_step[0] * d,
+                        last_known[1] + inter_step[1] * d
+                    ))
+                pos.append(keypoint.pt)
+        return pos
 
     # TODO: Add convenience that allows to calculate speed etc...
 
