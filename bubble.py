@@ -34,7 +34,7 @@ class Bubble:
                         last_known[1] + inter_step[1] * d
                     ))
                 pos.append(keypoint.pt)
-        return pos
+        return np.array(pos)
 
     # TODO: Add convenience that allows to calculate speed etc...
 
