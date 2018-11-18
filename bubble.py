@@ -80,6 +80,9 @@ class Tracker:
         return np.sqrt((a.pt[0] - b.pt[0])**2 + (a.pt[1] - b.pt[1])**2)
 
     def load_video(self, path, append_ok=False):
+        """
+        Load or append a video sequence to this tracker
+        """
         if not append_ok and len(self.frames) > 0:
             raise Exception("Video already loaded.")
         video = cv2.VideoCapture(path)
@@ -91,6 +94,10 @@ class Tracker:
         return len(self.frames)
 
     def track(self, overwrite=False):
+        """
+        Track bubbles over frames. If there is an existing
+        track, this is a no-op
+        """
         if not overwrite and self._did_track:
             return
         elif overwrite:
@@ -130,3 +137,11 @@ class Tracker:
         for bubble in bubbles:
             if bubble.last_seen - bubble.first_seen >= self.min_path_length:
                 self.bubbles.append(bubble)
+
+    def test_keypoints(self, frame_idx, color=(255,0,255)):
+        """
+        Test detector settings
+        """
+        keypoints = self._find_keypoints([self.frames[frame_idx]])[0]
+        image = cv2.drawKeypoints(self.frames[frame_idx], keypoints, np.array([]), color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+        return keypoints, image
