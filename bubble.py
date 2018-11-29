@@ -40,7 +40,7 @@ class Bubble:
 
 class Tracker:
 
-    def __init__(self):
+    def __init__(self, sample_only=False):
         # Setup SimpleBlobDetector parameters with sensible
         # default parameters
         self.params = cv2.SimpleBlobDetector_Params()
@@ -65,6 +65,9 @@ class Tracker:
         self.frames = []
         self.bubbles = []
         self._did_track = False
+
+        # For setting up a more efficient tracking test
+        self.sample_only = sample_only
 
         # Debug properties
         self.debug_keypoints = None
@@ -91,6 +94,8 @@ class Tracker:
             success, f = video.read()
             if success:
                 self.frames.append(f)
+            if self.sample_only:
+                break
         return len(self.frames)
 
     def track(self, overwrite=False):
