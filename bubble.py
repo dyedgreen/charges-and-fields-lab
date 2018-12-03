@@ -107,6 +107,9 @@ class Tracker:
             return
         elif overwrite:
             self.bubbles = []
+
+        self._did_track = True
+
         if len(self.frames) < 2:
             raise Exception("Need at least two frames for tracking.")
         # Generate key points for all frames
